@@ -6,4 +6,14 @@
     </style>
 
     <style name="Theme.CharacterBot" parent="Base.Theme.CharacterBot" />
+
+    <style name="Nick">
+        <item name="android:textColor">#FF5733</item> <!-- Text color for character 1 -->
+    </style>
+
+    <style name="Mike">
+        <item name="android:textColor">#3366FF</item> <!-- Text color for character 2 -->
+    </style>
+    <!-- Define styles for other characters as needed -->
+
 </resources>
