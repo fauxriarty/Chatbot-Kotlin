@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "330414752970",
+    "project_id": "kotlinapp-fdf1f",
+    "storage_bucket": "kotlinapp-fdf1f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:330414752970:android:85deb2b766e016af36a033",
+        "android_client_info": {
+          "package_name": "com.example.characterbot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKIIauJfXD-rTt7V-C2QSAK5Iq5Sb7mCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
