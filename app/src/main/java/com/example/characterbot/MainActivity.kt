@@ -84,8 +84,7 @@ class MainActivity : AppCompatActivity() {
                     chatText.append("user: $text\n")
                 } else {
                     val chatbotReply = generateBasicChatbotReply(text)
-
-                        chatText.append("$chatbotReply\n")
+                    chatText.append("$chatbotReply\n")
                 }
 
                 // deletes the message document to avoid processing it again
