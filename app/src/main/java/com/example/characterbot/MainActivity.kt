@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val firestore = FirebaseFirestore.getInstance()
     private val messagesCollection = firestore.collection("messages")
-    private var character: ChatCharacter = ChatCharacter("Nick", R.style.Nick) // Replace with your default character
+    private var character: ChatCharacter = ChatCharacter("Nick", R.style.Nick) //default character
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         val characters = listOf(
             ChatCharacter("Nick", R.style.Nick),
             ChatCharacter("Mike", R.style.Mike)
-            // Add more characters as needed
+            // can add more characters
         )
 
         val characterSpinner = binding.characterSpinner
@@ -40,24 +40,24 @@ class MainActivity : AppCompatActivity() {
             val message = chatInput.text.toString()
             if (message.isNotEmpty()) {
                 character =
-                    characters[characterSpinner.selectedItemPosition] // Initialize character based on the selected character
+                    characters[characterSpinner.selectedItemPosition] // based on the selected character
 
-                // Display user message as "user: message"
+                // displays the user message as "user: message"
                 val userMessageText = "user: $message"
                 chatText.append(userMessageText)
                 chatText.append("\n")
 
-                // Generate a chatbot reply (you can replace this with more advanced logic)
+                // generates a reply from the bot using a function defined later
                 val chatbotReply = generateBasicChatbotReply(message)
 
-                // Store the user's message in Firestore
+                // stores the user's message in Firestore
                 hashMapOf(
                     "sender" to "user",
                     "text" to message
                 )
                 //messagesCollection.add(userMessage)
 
-                // Display the character's reply
+                // displays the character's reply
                 val characterReplyText = "${character.name}: $chatbotReply"
                 chatText.append(characterReplyText)
                 chatText.append("\n")
@@ -68,36 +68,33 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        // Listen for new chat messages from Firestore
+        // listens for new chat messages from Firestore
         messagesCollection.addSnapshotListener { snapshot, exception ->
             if (exception != null) {
-                // Handle the error
-                return@addSnapshotListener
+                return@addSnapshotListener //error handling
             }
 
-            // Process new messages
+            // if any new messages to be processed
             snapshot?.documents?.forEach { document ->
                 val sender = document.getString("sender")
                 val text = document.getString("text")
 
                 if (sender == "user") {
-                    // Display user message as "user: message"
+
                     chatText.append("user: $text\n")
                 } else {
-                    // Generate a basic chatbot reply (you can replace this with more advanced logic)
                     val chatbotReply = generateBasicChatbotReply(text)
 
-                    // Display the character's reply as "character: reply"
                         chatText.append("$chatbotReply\n")
                 }
 
-                // Delete the message document to avoid processing it again
+                // deletes the message document to avoid processing it again
                 document.reference.delete()
             }
         }
     }
         private fun generateBasicChatbotReply(userMessage: String?): String {
-        // Implement your chatbot logic here (e.g., predefined responses)
+        // the idea is to train an LLM or simply use GPT4's api to make the bot reply in the style of the selected character
         return "Thank you for your message: \"$userMessage\". This is a basic chatbot reply."
     }
 }
