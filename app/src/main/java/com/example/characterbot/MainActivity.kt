@@ -59,9 +59,8 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 // Store the user's message in Firestore
-               // messagesCollection.add(messageData)
-                val customDocumentId = "0QPQwVauyXYLdNKW0gXn"
-                messagesCollection.document(customDocumentId).set(messageData)
+                messagesCollection.add(messageData)
+
 
                 // displays the character's reply
                 val characterReplyText = "${character.name}: $chatbotReply"
