@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 //import android.text.Html
 import android.widget.ArrayAdapter
 import com.example.characterbot.databinding.ActivityMainBinding
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
@@ -16,6 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -50,12 +52,16 @@ class MainActivity : AppCompatActivity() {
                 // generates a reply from the bot using a function defined later
                 val chatbotReply = generateBasicChatbotReply(message)
 
-                // stores the user's message in Firestore
-                hashMapOf(
+                // Create a map to represent the message data
+                val messageData = hashMapOf(
                     "sender" to "user",
                     "text" to message
                 )
-                //messagesCollection.add(userMessage)
+
+                // Store the user's message in Firestore
+               // messagesCollection.add(messageData)
+                val customDocumentId = "0QPQwVauyXYLdNKW0gXn"
+                messagesCollection.document(customDocumentId).set(messageData)
 
                 // displays the character's reply
                 val characterReplyText = "${character.name}: $chatbotReply"
@@ -65,6 +71,7 @@ class MainActivity : AppCompatActivity() {
                 chatInput.text.clear()
             }
         }
+
 
 
 

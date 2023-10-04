@@ -1,6 +1,6 @@
 plugins {
-    id("com.google.gms.google-services")
     id("com.android.application")
+    id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
 }
@@ -37,6 +37,8 @@ android {
             )
         }
     }
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
