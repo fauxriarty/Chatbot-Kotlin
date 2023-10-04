@@ -7,15 +7,25 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp"
+        android:background="#E0E0F4"
         tools:context=".MainActivity">
 
 
-        <Spinner
-            android:id="@+id/characterSpinner"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:padding="8dp"/>
+            android:elevation="4dp"
+            android:background="@drawable/cardbg">
+
+            <Spinner
+                android:id="@+id/characterSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:padding="8dp" />
+        </androidx.cardview.widget.CardView>
+
+
 
 
         <ScrollView
@@ -23,7 +33,8 @@
             android:layout_height="wrap_content"
 
             android:layout_marginBottom="16dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            tools:ignore="InefficientWeight">
 
             <TextView
                 android:id="@+id/chatText"
@@ -42,7 +53,7 @@
             android:hint="@string/hint_message"
             android:inputType="text"
             android:textColor="#000000"
-            android:textColorHint="#8D6E63"
+            android:textColorHint="#795548"
             tools:ignore="VisualLintTextFieldSize" />
 
         <Button
