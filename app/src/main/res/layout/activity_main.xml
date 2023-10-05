@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -6,57 +7,82 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:background="#E8EAF6"
+        android:padding="16dp"
+        android:background="#F7F8FC"
         tools:context=".MainActivity">
 
+        <!-- Top Bar / App Name -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Therapy via Fiction"
+            android:textColor="#3F51B5"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:gravity="center"/>
+
+        <!-- Spinner inside CardView for character selection -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:elevation="4dp"
-            app:cardCornerRadius="12dp"
-            android:background="#FFFFFF">
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp">
 
             <Spinner
                 android:id="@+id/characterSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:background="?android:attr/selectableItemBackground"/>
         </androidx.cardview.widget.CardView>
 
+        <!-- ScrollView for chat messages -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginBottom="24dp">
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:id="@+id/chatText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#424242"
+                android:textColor="#333333"
                 android:textSize="18sp" />
         </ScrollView>
 
+        <!-- EditText for user input -->
         <EditText
             android:id="@+id/chatInput"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="16dp"
             android:autofillHints="none"
+            android:background="#FFFFFF"
+            android:drawablePadding="10dp"
+            android:elevation="2dp"
             android:hint="@string/hint_message"
             android:inputType="text"
-            android:textColor="#9E9E9E"
-            android:textColorHint="#546E7A" />
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="#333333"
+            android:textColorHint="#757575" />
 
+        <!-- Send button -->
         <Button
             android:id="@+id/sendButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#3F51B5"
             android:text="@string/send"
-            android:textColor="#CFD8DC" />
+            android:padding="12dp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp"
+            android:shape="rectangle"
+            android:elevation="2dp"/>
+
     </LinearLayout>
 </layout>
-
