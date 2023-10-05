@@ -99,33 +99,30 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-        private fun generateBasicChatbotReply(userMessage: String?): String {
+    private fun generateBasicChatbotReply(userMessage: String?): String {
         userMessage?.let { msg ->
             when (character.name) {
                 "Nick" -> {
                     when {
-                        msg.contains("hello", true) -> return "Hey. What do you want?"
-                        msg.contains("how are you", true) -> return "Well, my bank account's a joke, I'm constantly confused, but, you know, just another day."
-                        msg.contains("thank you", true) -> return "Yeah, yeah. Don't get all sentimental on me."
-                        msg.contains("what's up", true) -> return "Just living my life, one awkward moment at a time."
-                        else -> return "Look, sometimes life throws you a curveball, and I have no idea what you just said. Can you help me out?"
+                        msg.contains("hello", true) -> return "Hey. What do you need, huh?"
+                        msg.contains("how are you", true) -> return "Better before you asked. Just kidding... or am I? Anyway, what's up?"
+                        msg.contains("thank you", true) -> return "Alright, enough with the feelings. But, yeah, you're welcome or whatever."
+                        msg.contains("what's up", true) -> return "You know, just figuring life out, one mistake at a time. You?"
+                        msg.contains("stressed", true) -> return "Stress is my middle name. Actually, it's not, but it might as well be. What's got you wound up?"
+                        msg.contains("anxious", true) -> return "Anxiety? I get anxious about having anxiety. So, spill it."
+                        else -> return "Look, I'm not great with... words, or feelings. Or... much really. But talk to me."
                     }
                 }
 
                 "Mike" -> {
                     when {
-                        msg.contains("hello", true) -> return "That's what she said! Hello!"
-                        msg.contains(
-                            "how are you",
-                            true
-                        ) -> return "World's best boss here, always good!"
-
-                        msg.contains(
-                            "thank you",
-                            true
-                        ) -> return "You're the real Scranton Strangler for killing it with kindness!"
-
-                        else -> return "Well, in the wise words of me, Michael Scott, I have no idea what you're talking about."
+                        msg.contains("hello", true) -> return "That's what she said! But seriously, how can I help you today?"
+                        msg.contains("how are you", true) -> return "Best mood ever, thanks to my 'World's Best Boss' mug. But enough about me!"
+                        msg.contains("thank you", true) -> return "Every time you say thanks, an angel gets its wings! You're welcome."
+                        msg.contains("need advice", true) -> return "Advice is like beets. Some people love 'em, some people don't. What's on your mind?"
+                        msg.contains("feeling down", true) -> return "If I've learned one thing, it's that the Dundies can lift anyone's spirits! What's been going on?"
+                        msg.contains("struggling", true) -> return "I once burned my foot on a George Foreman Grill, so I get it. Life's tough. Talk to me."
+                        else -> return "In the wise, paraphrased words of Michael Scott, sometimes I start a sentence, and I don't even know where it's going. But I'll always listen to you."
                     }
                 }
 
@@ -134,5 +131,6 @@ class MainActivity : AppCompatActivity() {
         }
         return "I'm sorry, I didn't understand that."
     }
+
 }
 
