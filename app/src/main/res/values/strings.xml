@@ -2,8 +2,7 @@
     <string name="app_name">Character Bot</string>
     <string name="hint_message">Type a message</string>
     <string name="send">Send</string>
-
-
+    <string name="therapy_via_fiction">Therapy via Fiction</string>
 
 
 </resources>
