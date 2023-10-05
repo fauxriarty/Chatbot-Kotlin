@@ -3,7 +3,6 @@ package com.example.characterbot
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-//import android.text.Html
 import android.widget.ArrayAdapter
 import com.example.characterbot.databinding.ActivityMainBinding
 import com.google.firebase.FirebaseApp
@@ -42,8 +41,7 @@ class MainActivity : AppCompatActivity() {
         sendButton.setOnClickListener {
             val message = chatInput.text.toString()
             if (message.isNotEmpty()) {
-                character =
-                    characters[characterSpinner.selectedItemPosition] // based on the selected character
+                character = characters[characterSpinner.selectedItemPosition]
 
                 // displays the user message as "user: message"
                 val userMessageText = "user: $message"
@@ -53,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 // generates a reply from the bot using a function defined later
                 val chatbotReply = generateBasicChatbotReply(message)
 
-                // Create a map to represent the message data
+                // creates a map to represent the message data
                 val messageData = hashMapOf(
                     "sender" to "user",
                     "text" to message,
@@ -62,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                     "isLocal" to true
                 )
 
-                // Store the user's message in Firestore
+                // store the user's message in Firestore
                 messagesCollection.add(messageData)
 
                 // displays the character's reply
@@ -74,37 +72,34 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-        // listens for new chat messages from Firestore
-        messagesCollection.addSnapshotListener { snapshot, exception ->
-            if (exception != null) {
-                Log.e("FirestoreError", "Error fetching chat messages", exception)
-                return@addSnapshotListener //error handling
-            }
-
-
-            // if any new messages to be processed
-            snapshot?.documents?.forEach { document ->
-                val sender = document.getString("sender") ?: return@forEach
-                val text = document.getString("text") ?: return@forEach
-
-                document.reference.update("isRead", true)
-
-                if (sender == "user") {
-
-                    chatText.append("user: $text\n")
-                } else {
-                    val chatbotReply = generateBasicChatbotReply(text)
-                    chatText.append("$chatbotReply\n")
+// listens for unread chat messages from Firestore
+        messagesCollection.whereEqualTo("isRead", false)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    Log.e("FirestoreError", "Error fetching chat messages", exception)
+                    return@addSnapshotListener
                 }
 
-                // deletes the message document to avoid processing it again
-                document.reference.delete()
+                snapshot?.documents?.forEach { document ->
+                    val sender = document.getString("sender") ?: return@forEach
+                    val text = document.getString("text") ?: return@forEach
+                    val isLocal = document.getBoolean("isLocal") ?: false
+
+                    if (sender == "user" && !isLocal) {
+                        chatText.append("user: $text\n")
+                    } else if (sender != "user") {
+                        val chatbotReply = generateBasicChatbotReply(text)
+                        chatText.append("$chatbotReply\n")
+                    }
+
+                    // mark the message as read
+                    document.reference.update("isRead", true)
+                }
             }
-        }
     }
 
-    private fun generateBasicChatbotReply(userMessage: String?): String {
+
+        private fun generateBasicChatbotReply(userMessage: String?): String {
         userMessage?.let { msg ->
             when (character.name) {
                 "Nick" -> {
