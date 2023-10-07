@@ -48,54 +48,58 @@ class MainActivity : AppCompatActivity() {
                 chatText.append(userMessageText)
                 chatText.append("\n")
 
-                // generates a reply from the bot using a function defined later
-                val chatbotReply = generateBasicChatbotReply(message)
-
-                // creates a map to represent the message data
-                val messageData = hashMapOf(
+                // creates a map to represent the user's message data
+                val userMessageData = hashMapOf(
                     "sender" to "user",
                     "text" to message,
-                    "timestamp" to System.currentTimeMillis(),
-                    "isRead" to false,
-                    "isLocal" to true
+                    "timestamp" to System.currentTimeMillis()
                 )
 
                 // store the user's message in Firestore
-                messagesCollection.add(messageData)
+                messagesCollection.add(userMessageData)
 
-                // displays the character's reply
-                val characterReplyText = "${character.name}: $chatbotReply"
-                chatText.append(characterReplyText)
-                chatText.append("\n")
+                // Wait for a short moment before storing the bot's message
+                chatInput.postDelayed({
+                    val chatbotReply = generateBasicChatbotReply(message)
+                    val characterReplyText = "${character.name}: $chatbotReply"
+                    chatText.append(characterReplyText)
+                    chatText.append("\n")
+
+                    // creates a map to represent the bot's message data
+                    val botMessageData = hashMapOf(
+                        "sender" to character.name, // Store the character's name here
+                        "text" to chatbotReply,
+                        "timestamp" to System.currentTimeMillis()
+                    )
+
+                    // store the bot's reply in Firestore
+                    messagesCollection.add(botMessageData)
+                }, 50) // 50 milliseconds delay
 
                 chatInput.text.clear()
             }
         }
 
+
 // listens for unread chat messages from Firestore
-        messagesCollection.whereEqualTo("isRead", false)
+        messagesCollection
+            .orderBy("timestamp")
             .addSnapshotListener { snapshot, exception ->
                 if (exception != null) {
                     Log.e("FirestoreError", "Error fetching chat messages", exception)
                     return@addSnapshotListener
                 }
 
+                chatText.text = "" // Clear the chat text to avoid duplicates
+
                 snapshot?.documents?.forEach { document ->
                     val sender = document.getString("sender") ?: return@forEach
                     val text = document.getString("text") ?: return@forEach
-                    val isLocal = document.getBoolean("isLocal") ?: false
-
-                    if (sender == "user" && !isLocal) {
-                        chatText.append("user: $text\n")
-                    } else if (sender != "user") {
-                        val chatbotReply = generateBasicChatbotReply(text)
-                        chatText.append("$chatbotReply\n")
-                    }
-
-                    // mark the message as read
-                    document.reference.update("isRead", true)
+                    chatText.append("$sender: $text\n")
                 }
+
             }
+
     }
 
 
