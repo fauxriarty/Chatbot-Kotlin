@@ -21,21 +21,45 @@
             android:textSize="24sp"
             android:gravity="center"/>
 
-        <androidx.cardview.widget.CardView
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="2dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <Spinner
-                android:id="@+id/characterSpinner"
-                android:layout_width="match_parent"
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="2dp">
+
+                <Spinner
+                    android:id="@+id/characterSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    android:background="?android:attr/selectableItemBackground"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Small menu icon to open favorites -->
+            <ImageView
+                android:id="@+id/favoritesMenuIcon"
+                android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:padding="12dp"
-                android:background="?android:attr/selectableItemBackground"/>
-        </androidx.cardview.widget.CardView>
+                android:src="@android:drawable/ic_menu_more"
+                android:layout_marginStart="8dp"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/open_favorites"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -48,7 +72,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#333333"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:contentDescription="@string/chat_history"
+                android:clickable="true"
+                android:longClickable="true"
+                android:focusable="true"
+                android:minHeight="48dp"
+                android:minWidth="48dp"/>
         </ScrollView>
 
         <EditText
@@ -67,17 +97,37 @@
             android:textColor="#333333"
             android:textColorHint="#757575" />
 
-        <Button
-            android:id="@+id/sendButton"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#3F51B5"
-            android:text="@string/send"
-            android:padding="12dp"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp"
-            android:shape="rectangle"
-            android:elevation="2dp"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/addToFavoritesButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="69dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#B0BEC5"
+                android:elevation="2dp"
+                android:padding="12dp"
+                android:text="@string/add_to_favorites"
+                android:textColor="#0D47A1" />
+
+            <Button
+                android:id="@+id/sendButton"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#3F51B5"
+                android:text="@string/send"
+                android:padding="12dp"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp"
+                android:elevation="2dp"
+                style="?android:attr/buttonBarButtonStyle" />
+        </LinearLayout>
 
     </LinearLayout>
 </layout>

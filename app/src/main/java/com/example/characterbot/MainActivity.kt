@@ -1,12 +1,19 @@
 package com.example.characterbot
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import com.example.characterbot.databinding.ActivityMainBinding
 import com.google.firebase.FirebaseApp
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import android.widget.Toast
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     private val firestore = FirebaseFirestore.getInstance()
     private val messagesCollection = firestore.collection("messages")
     private var character: ChatCharacter = ChatCharacter("Nick", R.style.Nick) //default character
+    private val realtimeDatabase = FirebaseDatabase.getInstance().reference
+    private val favoriteRepliesRef = realtimeDatabase.child("favoriteReplies")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,24 +38,19 @@ class MainActivity : AppCompatActivity() {
         )
 
         val characterSpinner = binding.characterSpinner
-        val characterAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, characters.map { it.name })
+        val characterAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, characters.map { it.name })
         characterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         characterSpinner.adapter = characterAdapter
 
-        val chatText = binding.chatText
-        val chatInput = binding.chatInput
-        val sendButton = binding.sendButton
-
-        sendButton.setOnClickListener {
-            val message = chatInput.text.toString()
+        binding.sendButton.setOnClickListener {
+            val message = binding.chatInput.text.toString()
             if (message.isNotEmpty()) {
                 character = characters[characterSpinner.selectedItemPosition]
 
                 // displays the user message as "user: message"
                 val userMessageText = "user: $message"
-                chatText.append(userMessageText)
-                chatText.append("\n")
+                binding.chatText.append(userMessageText)
+                binding.chatText.append("\n")
 
                 // creates a map to represent the user's message data
                 val userMessageData = hashMapOf(
@@ -59,15 +63,15 @@ class MainActivity : AppCompatActivity() {
                 messagesCollection.add(userMessageData)
 
                 // Wait for a short moment before storing the bot's message
-                chatInput.postDelayed({
+                binding.chatInput.postDelayed({
                     val chatbotReply = generateBasicChatbotReply(message)
                     val characterReplyText = "${character.name}: $chatbotReply"
-                    chatText.append(characterReplyText)
-                    chatText.append("\n")
+                    binding.chatText.append(characterReplyText)
+                    binding.chatText.append("\n")
 
                     // creates a map to represent the bot's message data
                     val botMessageData = hashMapOf(
-                        "sender" to character.name, // Store the character's name here
+                        "sender" to character.name,
                         "text" to chatbotReply,
                         "timestamp" to System.currentTimeMillis()
                     )
@@ -76,12 +80,11 @@ class MainActivity : AppCompatActivity() {
                     messagesCollection.add(botMessageData)
                 }, 50) // 50 milliseconds delay
 
-                chatInput.text.clear()
+                binding.chatInput.text.clear()
             }
         }
 
-
-// listens for unread chat messages from Firestore
+        // listens for unread chat messages from Firestore
         messagesCollection
             .orderBy("timestamp")
             .addSnapshotListener { snapshot, exception ->
@@ -89,17 +92,77 @@ class MainActivity : AppCompatActivity() {
                     Log.e("FirestoreError", "Error fetching chat messages", exception)
                     return@addSnapshotListener
                 }
-
-                chatText.text = "" // Clear the chat text to avoid duplicates
-
+                binding.chatText.text = "" // Clear the chat text to avoid duplicates
                 snapshot?.documents?.forEach { document ->
                     val sender = document.getString("sender") ?: return@forEach
                     val text = document.getString("text") ?: return@forEach
-                    chatText.append("$sender: $text\n")
+                    binding.chatText.append("$sender: $text\n")
                 }
-
             }
 
+        binding.addToFavoritesButton.setOnClickListener {
+            val lastReply = getLastBotReply(binding.chatText)
+            if (lastReply.startsWith(character.name)) {  // if it's a bot message
+                favoriteRepliesRef.push().setValue(lastReply).addOnSuccessListener {
+                    Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener { exception ->
+                    Toast.makeText(this, "Failed to add to favorites: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
+        binding.favoritesMenuIcon.setOnClickListener {
+            favoriteRepliesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val favoritedReplies = snapshot.children.mapNotNull { it.getValue(String::class.java) }
+                    if (favoritedReplies.isNotEmpty()) {
+                        showFavoriteRepliesDialog(favoritedReplies)
+                    } else {
+                        Toast.makeText(this@MainActivity, "No favorites added yet.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(this@MainActivity, "Failed to fetch favorites: ${error.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
+        binding.favoritesMenuIcon.setOnClickListener {
+            // Fetch the favorite replies from the database
+            favoriteRepliesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val favoritedReplies = snapshot.children.mapNotNull { it.getValue(String::class.java) }
+
+                    // Check if there are any favorited replies
+                    if (favoritedReplies.isNotEmpty()) {
+                        showFavoriteRepliesDialog(favoritedReplies)
+                    } else {
+                        Toast.makeText(this@MainActivity, "No favorites added yet.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(this@MainActivity, "Failed to fetch favorites: ${error.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
+
+
+    }
+    private fun getLastBotReply(tv: TextView): String {
+        val messages = tv.text.split("\n")
+        return messages.lastOrNull { it.startsWith(character.name + ":") } ?: ""
+    }
+
+    private fun showFavoriteRepliesDialog(replies: List<String>) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Favorited Replies")
+        val arrayAdapter = ArrayAdapter(this, android.R.layout.select_dialog_item, replies)
+        builder.setAdapter(arrayAdapter) { _, _ -> }
+        builder.setNegativeButton("Close") { dialog, _ -> dialog.dismiss() }
+        builder.show()
     }
 
 
@@ -135,6 +198,4 @@ class MainActivity : AppCompatActivity() {
         }
         return "I'm sorry, I didn't understand that."
     }
-
 }
-
