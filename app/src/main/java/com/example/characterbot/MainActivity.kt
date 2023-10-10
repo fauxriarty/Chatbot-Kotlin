@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import com.example.characterbot.databinding.ActivityMainBinding
+import com.example.characterbot.databinding.ToolbarLayoutBinding
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -30,6 +34,35 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        val toolbinding = ToolbarLayoutBinding.inflate(layoutInflater)
+        val toolbar = toolbinding.toolbar
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val drawerLayout = binding.drawerLayout
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.menu,
+            R.string.menu
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+
+
+        val toolbarIcon: ImageView = findViewById(R.id.toolbarIcon)
+        toolbarIcon.setOnClickListener {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+        }
 
         val characters = listOf(
             ChatCharacter("Nick", R.style.Nick),
@@ -131,10 +164,11 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
-
-
-
     }
+
+
+
+
     private fun getLastBotReply(tv: TextView): String {
         val messages = tv.text.split("\n")
         return messages.lastOrNull { it.startsWith(character.name + ":") } ?: ""

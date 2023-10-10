@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    android:theme="?attr/actionBarTheme"
+    android:contentInsetStart="0dp">
+
+    <!-- Icon or button to open the navigation drawer -->
+    <ImageView
+        android:id="@+id/toolbarIcon"
+        android:layout_width="48dp"
+        android:layout_height="64dp"
+        android:layout_gravity="start"
+        android:clickable="true"
+        android:contentDescription="@string/open_menu"
+        android:focusable="true"
+        android:padding="12dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="1dp"
+        android:src="@android:drawable/ic_menu_sort_by_size"
+        tools:ignore="ImageContrastCheck" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:paddingEnd="24dp"
+        android:text="@string/chat_with_characters"
+        android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
+
+</androidx.appcompat.widget.Toolbar>
