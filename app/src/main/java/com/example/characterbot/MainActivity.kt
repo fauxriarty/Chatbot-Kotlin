@@ -113,22 +113,6 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.favoritesMenuIcon.setOnClickListener {
-            favoriteRepliesRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val favoritedReplies = snapshot.children.mapNotNull { it.getValue(String::class.java) }
-                    if (favoritedReplies.isNotEmpty()) {
-                        showFavoriteRepliesDialog(favoritedReplies)
-                    } else {
-                        Toast.makeText(this@MainActivity, "No favorites added yet.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@MainActivity, "Failed to fetch favorites: ${error.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
-
-        binding.favoritesMenuIcon.setOnClickListener {
             // Fetch the favorite replies from the database
             favoriteRepliesRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
