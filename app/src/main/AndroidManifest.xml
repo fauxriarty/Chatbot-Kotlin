@@ -15,6 +15,9 @@
         android:theme="@style/Theme.CharacterBot"
         tools:targetApi="31">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserChatActivity"
             android:exported="false" />
         <activity

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="55dp"
+        android:background="@android:drawable/screen_background_light_transparent" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="74dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/rounded_button_bg"
+        android:contentDescription="@string/back"
+        android:padding="16dp"
+        android:src="@android:drawable/ic_menu_revert"
+        tools:ignore="ImageContrastCheck" />
+
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="239dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="21dp"
+        android:layout_marginEnd="45dp"
+        android:layout_toEndOf="@+id/backButton"
+        android:background="@drawable/rounded_bg"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:text="@string/user_name"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- RecyclerView to show chat messages -->
+
+    <!-- Layout at the bottom for typing and sending messages -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewChat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutChatBox"
+        android:layout_below="@+id/tvUserName"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="-10dp"
+        android:scrollbars="vertical" />
+
+    <LinearLayout
+        android:id="@+id/layoutChatBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/rounded_bg"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:elevation="8dp">
+
+        <EditText
+            android:id="@+id/editTextMessage"
+            android:layout_width="0dp"
+            android:layout_height="59dp"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:background="@android:drawable/editbox_background_normal"
+            android:hint="@string/hint_message"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColorHint="#1976D2"
+            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+
+        <Button
+            android:id="@+id/buttonSend"
+            android:layout_width="73dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="8dp"
+            android:background="@android:drawable/ic_menu_send"
+            android:contentDescription="@string/send"
+            android:textColor="#FFFFFF"
+            tools:ignore="TouchTargetSizeCheck" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

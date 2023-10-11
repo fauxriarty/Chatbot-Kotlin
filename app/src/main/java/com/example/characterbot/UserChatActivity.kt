@@ -87,9 +87,11 @@ class UserChatActivity : AppCompatActivity() {
 
         binding.usersListView.setOnItemClickListener { _, _, position, _ ->
             val selectedUser = usersList[position]
-            Toast.makeText(this, "Selected User: $selectedUser", Toast.LENGTH_SHORT).show()
-
+            val intent = Intent(this, ChatActivity::class.java)
+            intent.putExtra("userName", selectedUser)
+            startActivity(intent)
         }
+
         binding.addUserFab.setOnClickListener {
             showAddUserDialog()
         }
