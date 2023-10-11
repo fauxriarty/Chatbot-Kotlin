@@ -44,6 +44,7 @@
                 android:layout_height="60dp"
                 android:src="@android:drawable/ic_menu_more"
                 android:layout_marginStart="8dp"
+                android:backgroundTint="#3F51B5"
                 android:padding="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/open_favorites" />
@@ -91,9 +92,9 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#B0BEC5"
+                android:backgroundTint="#3F51B5"
                 android:text="@string/add_to_favorites"
-                android:textColor="#0D47A1" />
+                android:textColor="#FFFFFF" />
 
             <Button
                 android:id="@+id/sendButton"

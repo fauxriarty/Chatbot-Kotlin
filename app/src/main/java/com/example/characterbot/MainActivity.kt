@@ -1,6 +1,7 @@
 package com.example.characterbot
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = toolbinding.toolbar
         setSupportActionBar(toolbar)
 
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val drawerLayout = binding.drawerLayout
@@ -54,6 +56,25 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
+        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.chatWithBot -> {
+                    // Navigate to Chatbot page (which is MainActivity in this example)
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.chatWithUsers -> {
+                    // Navigate to UserChatActivity
+                    val intent = Intent(this, UserChatActivity::class.java)
+                    startActivity(intent)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                else -> false
+            }
+        }
 
         val toolbarIcon: ImageView = findViewById(R.id.toolbarIcon)
         toolbarIcon.setOnClickListener {

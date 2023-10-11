@@ -11,6 +11,9 @@
     <string name="menu">Menu</string>
     <string name="open_menu">Open menu</string>
     <string name="chat_with_characters">Chat with Characters</string>
+    <string name="type_a_message">Type a message</string>
+    <string name="navigation_drawer_open" />
+    <string name="navigation_drawer_close" />
 
 
 </resources>
