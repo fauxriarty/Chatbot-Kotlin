@@ -3,16 +3,25 @@ package com.example.characterbot
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.text.InputType
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import com.example.characterbot.databinding.ActivityUserChatBinding
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class UserChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserChatBinding
+    private lateinit var adapter: ArrayAdapter<String>
+    private val usersList = mutableListOf<String>()
+    private val firestore = FirebaseFirestore.getInstance()
+    private val usersCollection = firestore.collection("users")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +48,17 @@ class UserChatActivity : AppCompatActivity() {
         toggle.syncState()
         toggle.isDrawerIndicatorEnabled = false
 
-        val usersList = listOf("Alice", "Bob", "Charlie", "David", "Eva")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, usersList)
+        usersCollection.get().addOnSuccessListener { querySnapshot ->
+            for (document in querySnapshot) {
+                val user = document.getString("name")
+                if (user != null) usersList.add(user)
+            }
+            adapter.notifyDataSetChanged()
+        }
+
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, usersList)
         binding.usersListView.adapter = adapter
+
 
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -70,16 +87,43 @@ class UserChatActivity : AppCompatActivity() {
 
         binding.usersListView.setOnItemClickListener { _, _, position, _ ->
             val selectedUser = usersList[position]
-            // For now, it will just display a Toast. But you can navigate to the chat page here.
-            // val intent = Intent(this, ChatScreenActivity::class.java).apply {
-            //     putExtra("selectedUser", selectedUser)
-            // }
-            // startActivity(intent)
             Toast.makeText(this, "Selected User: $selectedUser", Toast.LENGTH_SHORT).show()
 
         }
+        binding.addUserFab.setOnClickListener {
+            showAddUserDialog()
+        }
 
     }
+
+    private fun showAddUserDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Add User")
+
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        builder.setPositiveButton("OK") { _, _ ->
+            val userName = input.text.toString()
+            if (userName.isNotBlank()) {
+                usersList.add(userName)
+                adapter.notifyDataSetChanged()  // Update the ListView
+
+                // Store user to Firestore
+                val user = hashMapOf("name" to userName)
+                usersCollection.add(user)
+
+                Toast.makeText(this, "User Added: $userName", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show()
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+
+        builder.show()
+    }
+
 }
 
 

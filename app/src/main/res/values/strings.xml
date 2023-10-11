@@ -14,6 +14,7 @@
     <string name="type_a_message">Type a message</string>
     <string name="navigation_drawer_open" />
     <string name="navigation_drawer_close" />
+    <string name="add_user">Add User</string>
 
 
 </resources>
