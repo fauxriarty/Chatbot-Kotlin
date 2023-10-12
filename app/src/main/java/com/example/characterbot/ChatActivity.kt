@@ -12,18 +12,17 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        val tvUserName = findViewById<TextView>(R.id.tvUserName)  // Get reference to the TextView
+        val tvUserName = findViewById<TextView>(R.id.tvUserName)
 
         val userName = intent.getStringExtra("userName")
         if (userName != null) {
             supportActionBar?.title = userName
-            tvUserName.text = userName  // Set the user's name to the TextView
+            tvUserName.text = userName
         } else {
             Toast.makeText(this, "User not found!", Toast.LENGTH_SHORT).show()
             finish()
         }
 
-        // Setup your chat view components here
         val backButton: ImageButton = findViewById(R.id.backButton)
         backButton.setOnClickListener {
             finish()

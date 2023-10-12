@@ -13,7 +13,6 @@ import androidx.core.view.GravityCompat
 import com.example.characterbot.databinding.ActivityUserChatBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class UserChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserChatBinding
@@ -21,7 +20,7 @@ class UserChatActivity : AppCompatActivity() {
     private val usersList = mutableListOf<String>()
     private val firestore = FirebaseFirestore.getInstance()
     private val usersCollection = firestore.collection("users")
-
+    private var currentUserName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,13 +30,11 @@ class UserChatActivity : AppCompatActivity() {
         setContentView(view)
         binding.toolbarLayout.toolbarTitle.text = getString(R.string.chat_with_users)
 
-
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
         val drawerLayout = binding.userDrawerLayout
-
         val toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -48,17 +45,8 @@ class UserChatActivity : AppCompatActivity() {
         toggle.syncState()
         toggle.isDrawerIndicatorEnabled = false
 
-        usersCollection.get().addOnSuccessListener { querySnapshot ->
-            for (document in querySnapshot) {
-                val user = document.getString("name")
-                if (user != null) usersList.add(user)
-            }
-            adapter.notifyDataSetChanged()
-        }
-
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, usersList)
         binding.usersListView.adapter = adapter
-
 
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -67,12 +55,10 @@ class UserChatActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-
                 R.id.chatWithUsers -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     true  // it's the current page, so no action is needed
                 }
-
                 else -> false
             }
         }
@@ -96,6 +82,56 @@ class UserChatActivity : AppCompatActivity() {
             showAddUserDialog()
         }
 
+        promptForUsername()
+    }
+
+    private fun fetchUsers() {
+        usersCollection.get().addOnSuccessListener { querySnapshot ->
+            for (document in querySnapshot) {
+                val user = document.getString("name")
+                if (user != null && user != currentUserName) usersList.add(user)
+            }
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun promptForUsername() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Enter your Username")
+
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        builder.setPositiveButton("OK") { _, _ ->
+            val userName = input.text.toString()
+            if (userName.isNotBlank()) {
+                usersCollection.whereEqualTo("name", userName).get()
+                    .addOnSuccessListener { querySnapshot ->
+                        if (querySnapshot.isEmpty) {
+                            // username does not exist in Firestore
+                            Toast.makeText(this, "Username not found", Toast.LENGTH_SHORT).show()
+                            promptForUsername() // Prompt again
+                        } else {
+                            // username exists so proceed and fetch users except it
+                            currentUserName = userName
+                            fetchUsers()
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Error checking username", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show()
+                promptForUsername() // Prompt again
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel()
+            finish() // cl activity if user cancels
+        }
+
+        builder.show()
     }
 
     private fun showAddUserDialog() {
@@ -109,14 +145,21 @@ class UserChatActivity : AppCompatActivity() {
         builder.setPositiveButton("OK") { _, _ ->
             val userName = input.text.toString()
             if (userName.isNotBlank()) {
-                usersList.add(userName)
-                adapter.notifyDataSetChanged()  // Update the ListView
+                // checkin if user already exists before adding
+                usersCollection.whereEqualTo("name", userName).get().addOnSuccessListener { querySnapshot ->
+                    if (querySnapshot.isEmpty) {
+                        usersList.add(userName)
+                        adapter.notifyDataSetChanged()  // Update the ListView
 
-                // Store user to Firestore
-                val user = hashMapOf("name" to userName)
-                usersCollection.add(user)
+                        // store user to Firestore
+                        val user = hashMapOf("name" to userName)
+                        usersCollection.add(user)
 
-                Toast.makeText(this, "User Added: $userName", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "User Added: $userName", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } else {
                 Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show()
             }
@@ -125,7 +168,4 @@ class UserChatActivity : AppCompatActivity() {
 
         builder.show()
     }
-
 }
-
-
