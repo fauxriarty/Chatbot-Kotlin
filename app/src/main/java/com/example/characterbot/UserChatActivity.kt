@@ -73,10 +73,15 @@ class UserChatActivity : AppCompatActivity() {
 
         binding.usersListView.setOnItemClickListener { _, _, position, _ ->
             val selectedUser = usersList[position]
+            val chatRoomId = getChatRoomId(currentUserName!!, selectedUser)
             val intent = Intent(this, ChatActivity::class.java)
-            intent.putExtra("userName", selectedUser)
+            intent.putExtra("chatRoomId", chatRoomId)
+            intent.putExtra("selectedUserName", selectedUser)
+            intent.putExtra("currentUserName", currentUserName)
             startActivity(intent)
         }
+
+
 
         binding.addUserFab.setOnClickListener {
             showAddUserDialog()
@@ -133,6 +138,12 @@ class UserChatActivity : AppCompatActivity() {
 
         builder.show()
     }
+
+    //  method to generate consistent chatroom ID
+    private fun getChatRoomId(userId1: String, userId2: String): String {
+        return if (userId1 < userId2) "$userId1-$userId2" else "$userId2-$userId1"
+    }
+
 
     private fun showAddUserDialog() {
         val builder = AlertDialog.Builder(this)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="layoutChatBox" type="id" />
+    <item name="editTextMessage" type="id" />
+    <item name="tvUserName" type="id" />
+    <item name="backButton" type="id" />
+    <item name="recyclerViewChat" type="id" />
+    <item name="buttonSend" type="id" />
+    <item name="tvSender" type="id" />
+    <item name="tvText" type="id" />
+</resources>

@@ -21,7 +21,7 @@ class ChatAdapter(private val messages: List<String>) : RecyclerView.Adapter<Cha
     }
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvMessage: TextView = itemView.findViewById(R.id.tvMessage)
+        private val tvMessage: TextView = itemView.findViewById(R.id.tvText)
 
         fun bind(message: String) {
             tvMessage.text = message
