@@ -181,13 +181,13 @@ class UserChatActivity : AppCompatActivity() {
             builder.setPositiveButton("OK") { _, _ ->
                 val userName = input.text.toString()
                 if (userName.isNotBlank()) {
-                    // Checking if user already exists before adding
+                    // to check if user already exists before adding
                     usersCollection.whereEqualTo("name", userName).get().addOnSuccessListener { querySnapshot ->
                         if (querySnapshot.isEmpty) {
                             usersList.add(userName)
-                            adapter.notifyDataSetChanged()  // Update the ListView
+                            adapter.notifyDataSetChanged()  // update the listview
 
-                            // Store user to Firestore with the addedBy field
+                            // store user to firestore along w who added it
                             val user = hashMapOf("name" to userName, "addedBy" to currentUserName)
                             usersCollection.add(user)
 

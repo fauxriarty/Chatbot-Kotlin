@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="@color/lightBlueBackground">
 
     <ImageButton
         android:id="@+id/backButton"
@@ -58,12 +58,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@android:drawable/editbox_background_normal"
+            android:background="#FFFFFF"
             android:hint="@string/hint_message"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="#333333"
+            android:textColorHint="#757575"
             android:inputType="text"
             android:minHeight="48dp"
             android:padding="8dp"
-            android:textColorHint="#1565C0"
             android:autofillHints=""
             tools:ignore="VisualLintTextFieldSize" />
 
