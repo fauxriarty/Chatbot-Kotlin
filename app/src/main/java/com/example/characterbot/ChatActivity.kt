@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
@@ -38,7 +37,7 @@ class ChatActivity : AppCompatActivity() {
 
         val rvMessages = findViewById<RecyclerView>(R.id.recyclerViewChat)
         val etMessage = findViewById<EditText>(R.id.editTextMessage)
-        val btnSend = findViewById<Button>(R.id.buttonSend)
+        val btnSend = findViewById<ImageButton>(R.id.buttonSend)
 
         messageAdapter = MessageAdapter(messagesList)
         rvMessages.adapter = messageAdapter

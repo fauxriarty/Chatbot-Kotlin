@@ -1,5 +1,6 @@
 package com.example.characterbot
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
@@ -22,6 +23,7 @@ class UserChatActivity : AppCompatActivity() {
     private val usersCollection = firestore.collection("users")
     private var currentUserName: String? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -87,7 +89,14 @@ class UserChatActivity : AppCompatActivity() {
             showAddUserDialog()
         }
 
-        promptForUsername()
+        currentUserName = getUserNameFromPreferences()
+        binding.greetingTextView.text = " Have a great day, $currentUserName! "
+
+        if (currentUserName == null) {
+            promptForUsername()
+        } else {
+            fetchUsers()
+        }
     }
 
     private fun fetchUsers() {
@@ -100,6 +109,7 @@ class UserChatActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun promptForUsername() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Enter your Username")
@@ -120,6 +130,8 @@ class UserChatActivity : AppCompatActivity() {
                         } else {
                             // username exists so proceed and fetch users except it
                             currentUserName = userName
+                            binding.greetingTextView.text = "  Have a great day, $currentUserName! " //spaced for padding
+                            saveUserNameToPreferences(userName)
                             fetchUsers()
                         }
                     }
@@ -138,6 +150,7 @@ class UserChatActivity : AppCompatActivity() {
 
         builder.show()
     }
+
 
     //  method to generate consistent chatroom ID
     private fun getChatRoomId(userId1: String, userId2: String): String {
@@ -179,4 +192,20 @@ class UserChatActivity : AppCompatActivity() {
 
         builder.show()
     }
+
+    // to save the username to SharedPreferences, its some storage mech in android where the data remains in it even after closing the app
+    // unless the app cache is cleared or app is uninstalled
+    private fun saveUserNameToPreferences(userName: String) {
+        val sharedPreferences = getSharedPreferences("characterbot_prefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("user_name", userName)
+        editor.apply()
+    }
+
+    // to retrieve the username from SharedPreferences
+    private fun getUserNameFromPreferences(): String? {
+        val sharedPreferences = getSharedPreferences("characterbot_prefs", MODE_PRIVATE)
+        return sharedPreferences.getString("user_name", null)
+    }
+
 }

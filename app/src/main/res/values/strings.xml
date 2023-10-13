@@ -17,6 +17,7 @@
     <string name="add_user">Add User</string>
     <string name="user_name">User Name</string>
     <string name="back">back</string>
+    <string name="favourite">Favourite</string>
 
 
 </resources>

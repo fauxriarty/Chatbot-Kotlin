@@ -36,7 +36,6 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp" />
 
-
         </LinearLayout>
 
         <!-- Navigation Drawer -->
@@ -51,6 +50,20 @@
             tools:ignore="VisualLintBounds" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
+
+    <TextView
+        android:id="@+id/greetingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_greeting_bg"
+        android:padding="10dp"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF" />
+
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addUserFab"
         android:layout_width="wrap_content"
@@ -59,4 +72,5 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/add_user"
         app:srcCompat="@android:drawable/ic_input_add" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -23,6 +23,8 @@
             android:gravity="center_vertical"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
+            android:background="@color/lightBlueBackground"
+
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
@@ -32,7 +34,9 @@
                 android:layout_weight="1"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="10dp"
+                android:background="@color/lightBlueBackground"
                 app:cardElevation="2dp">
+
 
                 <Spinner
                     android:id="@+id/characterSpinner"
@@ -59,8 +63,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@color/lightBlueBackground"
+
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
+
 
             <TextView
                 android:id="@+id/chatText"
@@ -80,6 +87,8 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingTop="8dp"
+            android:background="@color/lightBlueBackground"
+
             android:paddingBottom="8dp">
 
             <EditText
@@ -99,18 +108,21 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/lightBlueBackground"
+
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp">
 
                 <Button
                     android:id="@+id/addToFavoritesButton"
                     style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="30dp"
+                    android:layout_width="2dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:backgroundTint="#3F51B5"
-                    android:text="@string/add_to_favorites"
-                    android:textColor="#FFFFFF" />
+                    android:text="@string/favourite"
+                    android:textColor="#FFFFFF"
+                    tools:ignore="VisualLintButtonSize" />
 
                 <Button
                     android:id="@+id/sendButton"
@@ -121,7 +133,8 @@
                     android:layout_weight="2"
                     android:backgroundTint="#3F51B5"
                     android:text="@string/send"
-                    android:textColor="#FFFFFF" />
+                    android:textColor="#FFFFFF"
+                    tools:ignore="VisualLintButtonSize" />
             </LinearLayout>
 
         </LinearLayout>
