@@ -151,6 +151,12 @@ class UserChatActivity : AppCompatActivity() {
         builder.show()
     }
 
+    private fun checkUsersAddedByCurrentUser(onResult: (Int) -> Unit) {
+        usersCollection.whereEqualTo("addedBy", currentUserName).get().addOnSuccessListener { querySnapshot ->
+            onResult(querySnapshot.size())
+        }
+    }
+
 
     //  method to generate consistent chatroom ID
     private fun getChatRoomId(userId1: String, userId2: String): String {
@@ -159,39 +165,47 @@ class UserChatActivity : AppCompatActivity() {
 
 
     private fun showAddUserDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Add User")
-
-        val input = EditText(this)
-        input.inputType = InputType.TYPE_CLASS_TEXT
-        builder.setView(input)
-
-        builder.setPositiveButton("OK") { _, _ ->
-            val userName = input.text.toString()
-            if (userName.isNotBlank()) {
-                // checkin if user already exists before adding
-                usersCollection.whereEqualTo("name", userName).get().addOnSuccessListener { querySnapshot ->
-                    if (querySnapshot.isEmpty) {
-                        usersList.add(userName)
-                        adapter.notifyDataSetChanged()  // Update the ListView
-
-                        // store user to Firestore
-                        val user = hashMapOf("name" to userName)
-                        usersCollection.add(user)
-
-                        Toast.makeText(this, "User Added: $userName", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } else {
-                Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show()
+        checkUsersAddedByCurrentUser { count ->
+            if (count >= 3) {
+                Toast.makeText(this, "You can only add up to 3 users.", Toast.LENGTH_SHORT).show()
+                return@checkUsersAddedByCurrentUser
             }
-        }
-        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
 
-        builder.show()
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Add User")
+
+            val input = EditText(this)
+            input.inputType = InputType.TYPE_CLASS_TEXT
+            builder.setView(input)
+
+            builder.setPositiveButton("OK") { _, _ ->
+                val userName = input.text.toString()
+                if (userName.isNotBlank()) {
+                    // Checking if user already exists before adding
+                    usersCollection.whereEqualTo("name", userName).get().addOnSuccessListener { querySnapshot ->
+                        if (querySnapshot.isEmpty) {
+                            usersList.add(userName)
+                            adapter.notifyDataSetChanged()  // Update the ListView
+
+                            // Store user to Firestore with the addedBy field
+                            val user = hashMapOf("name" to userName, "addedBy" to currentUserName)
+                            usersCollection.add(user)
+
+                            Toast.makeText(this, "User Added: $userName", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show()
+                }
+            }
+            builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+
+            builder.show()
+        }
     }
+
 
     // to save the username to SharedPreferences, its some storage mech in android where the data remains in it even after closing the app
     // unless the app cache is cleared or app is uninstalled
@@ -209,3 +223,4 @@ class UserChatActivity : AppCompatActivity() {
     }
 
 }
+
