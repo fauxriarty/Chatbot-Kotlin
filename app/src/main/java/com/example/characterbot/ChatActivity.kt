@@ -78,6 +78,30 @@ class ChatActivity : AppCompatActivity() {
 
         fetchMessages()
     }
+    private fun fetchUserTokenAndSendNotification(username: String, title: String, body: String) {
+        println("Fetching token for user: $username")  // Log the username you're trying to fetch the token for
+
+        firestore.collection("users").whereEqualTo("name", username).limit(1).get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val userDocument = querySnapshot.documents[0]
+                    val token = userDocument.getString("fcmToken")
+                    println("Fetched token for user $username: $token")  // Log the token you fetched
+
+                    if (token != null) {
+                        NotificationUtil.sendNotification(token, title, body)
+                    } else {
+                        Toast.makeText(this, "Failed to send notification. Token not found.", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    println("User not found in Firestore: $username")  // Log if no user is found
+                }
+            }.addOnFailureListener { exception ->
+                println("Error fetching token for user $username: ${exception.message}")  // Log any errors encountered
+            }
+    }
+
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun fetchMessages() {
@@ -105,10 +129,15 @@ class ChatActivity : AppCompatActivity() {
         val messagesCollection = firestore.collection("chatRooms").document(chatRoomId!!).collection("messages")
         messagesCollection.add(message).addOnSuccessListener {
             // Message was added successfully.
+            val recipient = intent.getStringExtra("selectedUserName")
+            if (recipient != null) {
+                fetchUserTokenAndSendNotification(recipient, "New Message", "$sender: $text")
+            }
         }.addOnFailureListener {
             Toast.makeText(this, "Failed to send message!", Toast.LENGTH_SHORT).show()
         }
     }
+
 }
 
 class MessageAdapter(private val messages: List<Message>) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {

@@ -1,6 +1,7 @@
 package com.example.characterbot
 
 import android.app.AlertDialog
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -188,8 +189,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     private fun getLastBotReply(tv: TextView): String {
         val messages = tv.text.split("\n")
         return messages.lastOrNull { it.startsWith(character.name + ":") } ?: ""
@@ -203,6 +202,8 @@ class MainActivity : AppCompatActivity() {
         builder.setNegativeButton("Close") { dialog, _ -> dialog.dismiss() }
         builder.show()
     }
+
+
 
 
     private fun generateBasicChatbotReply(userMessage: String?): String {

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import android.text.InputType
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
@@ -12,7 +13,10 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import com.example.characterbot.databinding.ActivityUserChatBinding
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.Constants.MessageNotificationKeys.TAG
+import com.google.firebase.messaging.FirebaseMessaging
 
 class UserChatActivity : AppCompatActivity() {
 
@@ -181,21 +185,33 @@ class UserChatActivity : AppCompatActivity() {
             builder.setPositiveButton("OK") { _, _ ->
                 val userName = input.text.toString()
                 if (userName.isNotBlank()) {
-                    // to check if user already exists before adding
-                    usersCollection.whereEqualTo("name", userName).get().addOnSuccessListener { querySnapshot ->
-                        if (querySnapshot.isEmpty) {
-                            usersList.add(userName)
-                            adapter.notifyDataSetChanged()  // update the listview
+                    // Inside showAddUserDialog function, after checking if userName is not blank:
 
-                            // store user to firestore along w who added it
-                            val user = hashMapOf("name" to userName, "addedBy" to currentUserName)
-                            usersCollection.add(user)
-
-                            Toast.makeText(this, "User Added: $userName", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show()
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                            return@OnCompleteListener
                         }
-                    }
+
+                        // Get the FCM token
+                        val token = task.result
+
+                        usersCollection.whereEqualTo("name", userName).get().addOnSuccessListener { querySnapshot ->
+                            if (querySnapshot.isEmpty) {
+                                usersList.add(userName)
+                                adapter.notifyDataSetChanged()  // update the listview
+
+                                // store user to firestore along with who added it and the FCM token
+                                val user = hashMapOf("name" to userName, "addedBy" to currentUserName, "fcmToken" to token)
+                                usersCollection.add(user)
+
+                                Toast.makeText(this, "User Added: $userName", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    })
+
                 } else {
                     Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show()
                 }
@@ -223,4 +239,3 @@ class UserChatActivity : AppCompatActivity() {
     }
 
 }
-
