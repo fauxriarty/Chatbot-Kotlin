@@ -78,28 +78,17 @@ class ChatActivity : AppCompatActivity() {
 
         fetchMessages()
     }
-    private fun fetchUserTokenAndSendNotification(username: String, title: String, body: String) {
-        println("Fetching token for user: $username")  // Log the username you're trying to fetch the token for
-
-        firestore.collection("users").whereEqualTo("name", username).limit(1).get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val userDocument = querySnapshot.documents[0]
-                    val token = userDocument.getString("fcmToken")
-                    println("Fetched token for user $username: $token")  // Log the token you fetched
-
-                    if (token != null) {
-                        NotificationUtil.sendNotification(token, title, body)
-                    } else {
-                        Toast.makeText(this, "Failed to send notification. Token not found.", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    println("User not found in Firestore: $username")  // Log if no user is found
-                }
-            }.addOnFailureListener { exception ->
-                println("Error fetching token for user $username: ${exception.message}")  // Log any errors encountered
-            }
+    private fun fetchUserTokenAndSendNotification(title: String, body: String) {
+        // Retrieve token from shared preferences
+        val sharedPreferences = getSharedPreferences("characterbot_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("fcmToken", null)
+        if (token != null) {
+            NotificationUtil.sendNotification(token, title, body)
+        } else {
+            Toast.makeText(this, "Failed to send notification. Token not found.", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
 
 
@@ -131,7 +120,7 @@ class ChatActivity : AppCompatActivity() {
             // Message was added successfully.
             val recipient = intent.getStringExtra("selectedUserName")
             if (recipient != null) {
-                fetchUserTokenAndSendNotification(recipient, "New Message", "$sender: $text")
+                fetchUserTokenAndSendNotification("New Message", "$sender: $text")
             }
         }.addOnFailureListener {
             Toast.makeText(this, "Failed to send message!", Toast.LENGTH_SHORT).show()
